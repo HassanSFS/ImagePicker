@@ -1,117 +1,79 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
-import React from 'react';
-import type {PropsWithChildren} from 'react';
+import React, {useState} from 'react';
 import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
   View,
+  Text,
+  StyleSheet,
+  Button,
+  ImageBackground,
+  Dimensions,
 } from 'react-native';
+import ImagePicker from 'react-native-image-crop-picker';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
-
-function Section({children, title}: SectionProps): JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
+const App = () => {
+  const [image, setImage] = useState(
+    'https://media.istockphoto.com/id/1337144146/vector/default-avatar-profile-icon-vector.jpg?s=612x612&w=0&k=20&c=BIbFwuv7FxTWvh5S3vB6bkT0Qv8Vn8N5Ffseq84ClGI=',
   );
-}
 
-function App(): JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+  const choosePhoto = () => {
+    ImagePicker.openPicker({
+      width: 300,
+      height: 400,
+      cropping: true,
+      compressImageQuality: 1.0,
+    }).then(image => {
+      setImage(image.path || '');
+    });
   };
 
+  const takePhoto = () => {
+    ImagePicker.openCamera({
+      width: 300,
+      height: 400,
+      cropping: true,
+      compressImageQuality: 1.0,
+    }).then(image => {
+      setImage(image.path || '');
+    });
+  };
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
+    <View style={styles.container}>
+      <View style={styles.photoContainer}>
+        <ImageBackground
+          source={{
+            uri: image,
+          }}
+          resizeMode="contain"
           style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}></ImageBackground>
+      </View>
+      <View style={styles.buttonContainer}>
+        <Button title="Choose Photo" onPress={() => choosePhoto()} />
+        <Button title="Take Photo" onPress={() => takePhoto()} />
+      </View>
+    </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+  container: {
+    flex: 1,
+    padding: 10,
   },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
+  photoContainer: {
+    backgroundColor: 'white',
+    height: '95%',
+    borderWidth: 2,
+    borderColor: '#000',
+    borderStyle: 'dashed',
   },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
+
+  buttonContainer: {
+    height: '5%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
 });
 
